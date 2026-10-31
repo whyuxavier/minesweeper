@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Сапер на сім сезонів</title>
+<meta name="description" content="Сапер у браузері: 3 рівні складності та 7 тем — класика, осінь, Геловін, Різдво, нутрощі ПК, блоковий світ і кіберспорт.">
+<link id="fav" rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%23c0c0c0%22%2F%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%227%22%20fill%3D%22%23111%22%2F%3E%3Cpath%20d%3D%22M16%206v20M6%2016h20M9%209l14%2014M23%209L9%2023%22%20stroke%3D%22%23111%22%20stroke-width%3D%222.4%22%2F%3E%3Crect%20x%3D%2212.5%22%20y%3D%2212.5%22%20width%3D%223%22%20height%3D%223%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Creepster&family=JetBrains+Mono:wght@500;800&family=Manrope:wght@400;500;600;700&family=Mountains+of+Christmas:wght@700&family=Press+Start+2P&family=Unbounded:wght@500;700;800&display=swap">
+<style>
+html,body{margin:0}
+
+/* Layout: header → hero (text left, game-window illustration right) → toolbar → framed board. Every color comes from the active skin. */
+:root{
+  --display:"Unbounded", "Segoe UI", system-ui, sans-serif;
+  --body:"Manrope", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  /* skin: classic (default) */
+  --bg:#e7eaee; --surface:#f7f8fa; --ink:#1a1f26; --muted:#5a6572; --line:#cfd6de;
+  --accent:#1d5fc4; --accent-ink:#ffffff; --frame:#c0c0c0; --frame-ink:#1a1f26;
+  --cov:#c0c0c0; --hi:#ffffff; --lo:#7b7b7b; --bev:2px; --cov-img:none;
+  --rev:#c6c6c6; --rev-line:#8c8c8c; --rev-img:none; --hit:#ff3030; --mine-bg:#d8d8d8;
+  --gap:0px; --radius:0px;
+  --numfont:"Tahoma", "Verdana", var(--body); --numweight:800; --numscale:.6;
+  --n1:#0000ff; --n2:#008000; --n3:#ff0000; --n4:#000080; --n5:#800000; --n6:#008080; --n7:#000000; --n8:#707070;
+  color-scheme:light;
+}
+:root[data-skin="autumn"]{
+  --bg:#f5e8d4; --surface:#fff7ea; --ink:#3a2416; --muted:#7a5a43; --line:#e2caa9;
+  --accent:#c2521b; --accent-ink:#fff; --frame:#7a4a24; --frame-ink:#fff3df;
+  --cov:#d9883a; --hi:#f4b866; --lo:#99501a; --bev:2px;
+  --cov-img:radial-gradient(circle at 30% 25%, rgba(255,226,160,.45) 0 18%, transparent 19%);
+  --rev:#f3e2c2; --rev-line:#dcc29b; --hit:#e0442c; --mine-bg:#f7d7c4;
+  --gap:2px; --radius:5px;
+  --numfont:var(--display); --numweight:800; --numscale:.5;
+  --n1:#2f6b3a; --n2:#b5461c; --n3:#8a2d12; --n4:#5b3d8a; --n5:#7a4a14; --n6:#2a6f6f; --n7:#3a2416; --n8:#7a5a43;
+  color-scheme:light;
+}
+:root[data-skin="halloween"]{
+  --bg:#130c1c; --surface:#1e1430; --ink:#f3e9ff; --muted:#b9a5d2; --line:#33244a;
+  --accent:#ff8a1f; --accent-ink:#1a0f00; --frame:#2a1c40; --frame-ink:#f3e9ff;
+  --cov:#3d2a58; --hi:#5c4384; --lo:#21153a; --bev:2px;
+  --cov-img:radial-gradient(ellipse at 50% 0%, rgba(255,138,31,.16), transparent 70%);
+  --rev:#191124; --rev-line:#2c1f40; --hit:#a8321f; --mine-bg:#4a2f66;
+  --gap:3px; --radius:6px;
+  --numfont:"Creepster", var(--display); --numweight:400; --numscale:.78;
+  --n1:#ff9d2e; --n2:#8be36b; --n3:#ff5c7a; --n4:#c58bff; --n5:#ffd34d; --n6:#5fd6e0; --n7:#ffffff; --n8:#b9a5d2;
+  color-scheme:dark;
+}
+:root[data-skin="xmas"]{
+  --bg:#e7f0f8; --surface:#ffffff; --ink:#14273a; --muted:#4c6378; --line:#cbdae8;
+  --accent:#c8202f; --accent-ink:#fff; --frame:#1f5a3a; --frame-ink:#f2fff6;
+  --cov:#b6d0e8; --hi:#eef6ff; --lo:#7a9ec0; --bev:2px;
+  --cov-img:radial-gradient(circle at 28% -8%, #fff 0 34%, transparent 35%), radial-gradient(circle at 74% -12%, #fff 0 34%, transparent 35%);
+  --rev:#fffaf1; --rev-line:#e7dcc8; --hit:#ff6b6b; --mine-bg:#ffe1e1;
+  --gap:3px; --radius:8px;
+  --numfont:"Mountains of Christmas", Georgia, serif; --numweight:700; --numscale:.8;
+  --n1:#1f6b3a; --n2:#c8202f; --n3:#1d4f91; --n4:#8a5a12; --n5:#7a1f5c; --n6:#0f7c7c; --n7:#14273a; --n8:#6a7d8f;
+  color-scheme:light;
+}
+:root[data-skin="pc"]{
+  --bg:#06120d; --surface:#0c1d16; --ink:#d8ffe9; --muted:#8fbfa4; --line:#1b3829;
+  --accent:#39d98a; --accent-ink:#04140c; --frame:#0f2a1d; --frame-ink:#d8ffe9;
+  --cov:#1d6b45; --hi:#2e8e5e; --lo:#0e3b26; --bev:2px;
+  --cov-img:radial-gradient(circle at 22% 26%, #d9b45a 0 7%, transparent 8%), radial-gradient(circle at 78% 74%, #d9b45a 0 7%, transparent 8%), linear-gradient(90deg, transparent 21%, rgba(217,180,90,.5) 21% 25%, transparent 25%), linear-gradient(0deg, transparent 72%, rgba(217,180,90,.5) 72% 76%, transparent 76%);
+  --rev:#09150f; --rev-line:#163024; --hit:#7a1d1d; --mine-bg:#14301f;
+  --gap:2px; --radius:3px;
+  --numfont:var(--mono); --numweight:800; --numscale:.56;
+  --n1:#39d98a; --n2:#4fc3ff; --n3:#ff6b6b; --n4:#c792ea; --n5:#ffcb6b; --n6:#89ddff; --n7:#ffffff; --n8:#8fbfa4;
+  color-scheme:dark;
+}
+:root[data-skin="blocks"]{
+  --bg:#2a2e25; --surface:#383d31; --ink:#f4f1e6; --muted:#c6bea8; --line:#4c533e;
+  --accent:#7cc242; --accent-ink:#11200a; --frame:#4a3523; --frame-ink:#f4f1e6;
+  --cov:#6fb43f; --hi:transparent; --lo:transparent; --bev:0px;
+  --rev:#a9a9a9; --rev-line:#8d8d8d; --hit:#d23b2a; --mine-bg:#c9b8a3;
+  --gap:0px; --radius:0px;
+  --numfont:"Press Start 2P", var(--mono); --numweight:400; --numscale:.42;
+  --n1:#1a3fbf; --n2:#1f6b1a; --n3:#b51a1a; --n4:#121a6b; --n5:#6b1212; --n6:#0f6b6b; --n7:#111111; --n8:#3a3a3a;
+  color-scheme:dark;
+}
+:root[data-skin="esports"]{
+  --bg:#0d1015; --surface:#161b22; --ink:#e8edf2; --muted:#93a0ae; --line:#252e39;
+  --accent:#f5a524; --accent-ink:#1a1100; --frame:#1d242d; --frame-ink:#e8edf2;
+  --cov:#2b333d; --hi:#3d4754; --lo:#1a2027; --bev:2px;
+  --cov-img:repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0 3px, transparent 3px 6px);
+  --rev:#11151a; --rev-line:#1f262e; --hit:#8a1f1f; --mine-bg:#2e2a1c;
+  --gap:2px; --radius:2px;
+  --numfont:"Black Ops One", var(--display); --numweight:400; --numscale:.62;
+  --n1:#4cc9f0; --n2:#7bd88f; --n3:#ff5d5d; --n4:#b48cff; --n5:#f5a524; --n6:#2ee6c5; --n7:#ffffff; --n8:#93a0ae;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font:500 16px/1.55 var(--body);transition:background-color .25s,color .25s}
+.page{max-width:1140px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 40px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* header */
+.top{display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;padding-block:14px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.top .skins{margin-inline:auto}
+.brand .tile{width:38px;height:38px;border-radius:10px;background:var(--cov);display:grid;place-items:center;box-shadow:inset 2px 2px 0 var(--hi), inset -2px -2px 0 var(--lo);flex:none}
+.brand .tile svg{width:26px;height:26px}
+.brand b{font:800 18px/1.1 var(--display);letter-spacing:.01em}
+.brand small{display:block;font:500 12px/1.2 var(--body);color:var(--muted)}
+.icon-btn{width:42px;height:42px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;flex:none}
+.icon-btn:hover{border-color:var(--accent)}
+.icon-btn svg{width:22px;height:22px}
+.info-btn{font:800 15px/1 var(--mono);letter-spacing:-.02em}
+
+/* stage: subtle board-grid pattern behind the game, fading to the edges */
+.stage{position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;padding-block:6px 10px}
+.stage::before{content:"";position:absolute;inset:-20px 0 -10px;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(var(--line) 1.5px, transparent 1.5px),linear-gradient(90deg, var(--line) 1.5px, transparent 1.5px);
+  background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 10%, transparent 75%);
+          mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 10%, transparent 75%)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-weight:700;cursor:pointer;text-decoration:none;color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn svg{width:18px;height:18px}
+
+/* game */
+.skins{display:flex;gap:6px;padding:4px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line)}
+.skin{width:38px;height:38px;flex:none;display:grid;place-items:center;padding:0;border-radius:10px;border:0;background:var(--tile);cursor:pointer;opacity:.7;transition:opacity .15s, transform .15s}
+.skin svg{width:28px;height:28px}
+.skin:hover{opacity:1}
+.skin[aria-checked="true"]{opacity:1;box-shadow:0 0 0 2.5px var(--surface), 0 0 0 5px var(--accent)}
+.size-btn{width:auto;display:inline-flex;gap:7px;padding:0 12px;font:700 14px/1 var(--mono);font-variant-numeric:tabular-nums}
+.size-btn svg{width:18px;height:18px}
+.mid{display:flex;align-items:center;gap:8px}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:12px;padding:3px;gap:3px;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:8px 14px;border-radius:9px;cursor:pointer;font:700 14px/1 var(--mono);font-variant-numeric:tabular-nums}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.icon-btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn .pip3{display:grid;grid-template-columns:repeat(3,5px);gap:2px}
+.icon-btn .pip3 i{width:5px;height:5px;border-radius:50%;background:currentColor}
+.icon-btn .pip3 i:nth-child(even){visibility:hidden}
+.icon-btn .dig{font:800 17px/1 var(--mono)}
+
+.frame{position:relative;width:max-content;max-width:100%;margin-inline:auto;background:var(--frame);color:var(--frame-ink);border-radius:18px;padding:14px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0}
+:root[data-skin="classic"] .frame{border-radius:4px;box-shadow:inset 3px 3px 0 #fff, inset -3px -3px 0 #7b7b7b}
+.status-bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.lcd{min-width:76px;padding:6px 10px;border-radius:8px;background:#0b0b0b;color:#ff3b30;font:800 26px/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:.06em;text-align:center}
+:root[data-skin="pc"] .lcd{color:#39d98a}
+:root[data-skin="halloween"] .lcd,:root[data-skin="esports"] .lcd{color:var(--accent)}
+:root[data-skin="xmas"] .lcd{background:#fffaf1;color:#c8202f}
+.face{width:50px;height:50px;border-radius:12px;border:0;background:var(--cov);box-shadow:inset 2px 2px 0 var(--hi), inset -2px -2px 0 var(--lo);display:grid;place-items:center;cursor:pointer;color:var(--ink)}
+:root[data-skin="blocks"] .face{background:#6fb43f;box-shadow:inset 0 -6px 0 #5a9a30;color:#11200a}
+:root[data-skin="pc"] .face,:root[data-skin="halloween"] .face,:root[data-skin="esports"] .face{color:var(--accent)}
+.face svg{width:34px;height:34px}
+.board-wrap{overflow-x:auto;min-width:0;padding-bottom:2px}
+.board{display:grid;gap:var(--gap);width:max-content;margin-inline:auto;outline:none;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.board:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.cell{width:var(--cell,32px);height:var(--cell,32px);display:grid;place-items:center;border-radius:var(--radius);font-family:var(--numfont);font-weight:var(--numweight);font-size:calc(var(--cell,32px)*var(--numscale));line-height:1;cursor:pointer;position:relative}
+.cell svg{width:80%;height:80%;pointer-events:none}
+.cell.c{background:var(--cov-img),var(--cov);background-size:100% 100%;box-shadow:inset var(--bev) var(--bev) 0 var(--hi), inset calc(-1*var(--bev)) calc(-1*var(--bev)) 0 var(--lo);image-rendering:pixelated}
+.cell.c:hover{filter:brightness(1.1)}
+.cell.o{background:var(--rev-img),var(--rev);background-size:100% 100%;box-shadow:inset 0 0 0 1px var(--rev-line);cursor:default;image-rendering:pixelated}
+:root[data-skin="classic"] .cell.o{box-shadow:inset 1px 1px 0 var(--rev-line)}
+.cell.mine{background:var(--mine-bg)}
+.cell.hit{background:var(--hit)}
+.cell.wrong::after{content:"";position:absolute;inset:16%;background:linear-gradient(45deg,transparent 44%,#e3262b 44% 56%,transparent 56%),linear-gradient(-45deg,transparent 44%,#e3262b 44% 56%,transparent 56%)}
+.board.kbd .cell.cur{outline:3px solid var(--accent);outline-offset:-3px;z-index:1}
+.n1{color:var(--n1)}.n2{color:var(--n2)}.n3{color:var(--n3)}.n4{color:var(--n4)}.n5{color:var(--n5)}.n6{color:var(--n6)}.n7{color:var(--n7)}.n8{color:var(--n8)}
+:root[data-skin="halloween"] .cell .num,:root[data-skin="pc"] .cell .num{text-shadow:0 0 8px currentColor}
+.pips{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);width:64%;height:64%;gap:8%}
+.pips i{background:currentColor;border-radius:50%;visibility:hidden}
+.pips i.on{visibility:visible}
+:root[data-skin="blocks"] .pips i{border-radius:0}
+.gauge{position:relative;width:74%;height:68%;display:grid;grid-template-columns:repeat(4,1fr);align-items:end;gap:10%;border-bottom:2px solid #2f6b4b}
+.gauge i{border-radius:2px 2px 0 0;background:#173a28}
+.gauge i:nth-child(1){height:30%}.gauge i:nth-child(2){height:52%}.gauge i:nth-child(3){height:74%}.gauge i:nth-child(4){height:96%}
+.gauge i.on{background:linear-gradient(0deg,#39d98a 0%,var(--lv) 55%)}
+.g1{--lv:#ffe14d}.g2{--lv:#ff9a1f}.g3{--lv:#ff3b3b}.g4{--lv:#b3001e}
+.g4 i.on{box-shadow:0 0 7px rgba(255,40,60,.7)}
+.gauge em{position:absolute;top:-6%;width:3px;height:3px;border-radius:50%;background:#fff}
+.banner{display:flex;align-items:center;justify-content:center;gap:12px;padding:6px 6px 6px 14px;border-radius:12px;background:var(--surface);color:var(--ink);justify-self:center;white-space:nowrap}
+.banner b{font:800 16px/1 var(--display)}
+.banner span{font:600 14px/1 var(--mono);color:var(--muted)}
+.pop{animation:pop .3s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:translateY(-8px) scale(.92);opacity:0}}
+.shake{animation:shake .32s ease-in-out}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.records{display:flex;flex-wrap:wrap;gap:8px 18px}
+.records b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* dialog */
+dialog{max-width:min(560px, calc(100vw - 32px));width:100%;border:1.5px solid var(--line);border-radius:20px;padding:0;background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(8,10,14,.55)}
+.dlg{padding:24px;display:grid;gap:14px;max-height:min(80vh,720px);overflow:auto}
+.dlg header{display:flex;align-items:center;gap:12px}
+.dlg h3{font:800 22px/1.1 var(--display);margin:0;margin-right:auto}
+.dlg h4{font:600 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:6px 0 0}
+.dlg p,.dlg ul{margin:0;color:var(--ink)}
+.dlg ul{padding-left:20px;display:grid;gap:5px}
+.dlg kbd{font:600 12px/1 var(--mono);padding:3px 6px;border-radius:6px;border:1px solid var(--line);background:var(--bg)}
+.gh{justify-self:start}
+.gh .star{color:#f5b301}
+
+@media (max-width:640px){
+  .top .skins{order:3;width:100%;justify-content:space-between;margin:0}
+  .top .brand{margin-right:auto}
+  .skin{width:34px;height:34px}
+  .lcd{font-size:20px;min-width:56px;padding:6px 6px}
+  .mid{gap:6px}
+  .mid .icon-btn{width:38px;height:38px}
+  .face{width:44px;height:44px}
+  .skin svg{width:25px;height:25px}
+  .frame{padding:10px;border-radius:14px}
+  .lcd{font-size:22px;min-width:64px}
+  .seg button{padding:8px 10px;font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){
+  .shake,.pop{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div class="brand">
+      <span class="tile" id="brandIcon"></span>
+      <b>Сапер</b>
+    </div>
+    <div class="skins" id="skins" role="radiogroup" aria-label="Тема"></div>
+    <button class="icon-btn size-btn" id="sizeBtn" type="button" title="Розмір поля"></button>
+    <button class="icon-btn" id="soundBtn" type="button" aria-pressed="true" aria-label="Звук" title="Звук"></button>
+    <button class="icon-btn info-btn" id="infoBtn" type="button" aria-label="Про гру, правила й керування" title="Про гру">[i]</button>
+  </header>
+
+  <main class="stage">
+    <div class="frame">
+      <div class="status-bar">
+        <div class="lcd" id="minesLeft" aria-label="Залишилось мін">010</div>
+        <div class="mid">
+          <button class="icon-btn" id="numsBtn" type="button" title="Цифри або точки"></button>
+          <button class="face" id="face" type="button" aria-label="Нова гра" title="Нова гра (R)"></button>
+          <button class="icon-btn" id="modeBtn" type="button" aria-pressed="false" title="Режим прапорців"></button>
+        </div>
+        <div class="lcd" id="timer" aria-label="Час, секунди">000</div>
+      </div>
+      <div class="board-wrap" id="wrap"><div class="board" id="board" tabindex="0" role="grid" aria-label="Ігрове поле"></div></div>
+      <div class="banner" id="banner" role="status" hidden><b id="bTitle"></b><span id="bText"></span><button class="btn primary" id="bAgain" type="button">Ще раз</button></div>
+    </div>
+  </main>
+</div>
+
+<dialog id="info" aria-labelledby="infoTitle">
+  <div class="dlg">
+    <header><h3 id="infoTitle">Про гру</h3><button class="icon-btn" id="closeInfo" type="button" aria-label="Закрити"><svg viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+    <p>Знайди всі міни, не відкривши жодної. Число на клітинці — скільки мін поруч.</p>
+    <h4>Керування</h4>
+    <ul>
+      <li>Клік — відкрити, правий клік — прапорець.</li>
+      <li>На телефоні: дотик — відкрити, довге натискання — прапорець.</li>
+      <li>Клавіатура: стрілки, <kbd>Enter</kbd>, <kbd>F</kbd> — прапорець, <kbd>R</kbd> — нова гра.</li>
+    </ul>
+    <h4>Кнопки</h4>
+    <ul>
+      <li><b>9×9</b> угорі — змінити розмір поля.</li>
+      <li><b>1</b> — цифри або точки, прапорець — режим позначок.</li>
+      <li>У темі «Нутрощі ПК» замість цифр графік: чим вищий і червоніший, тим більше мін.</li>
+    </ul>
+    <h4>Рекорди</h4>
+    <p class="records" id="records"></p>
+    <a class="btn gh" href="https://github.com/whyuxavier/minesweeper" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0C17.3 4.8 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>Код на GitHub<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 2 3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z"/></svg></a>
+  </div>
+</dialog>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const root = document.documentElement;
+const LS = {
+  get(k, d){ try { const v = localStorage.getItem('saper.' + k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem('saper.' + k, JSON.stringify(v)); } catch(e){} }
+};
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const S = (inner, crisp) => `<svg viewBox="0 0 32 32" aria-hidden="true"${crisp ? ' shape-rendering="crispEdges"' : ''}>${inner}</svg>`;
+
+/* ---------- pixel tiles for the block world ---------- */
+function pixelTile(rows, pal){
+  let r = '';
+  rows.forEach((row, y) => [...row].forEach((ch, x) => { r += `<rect x="${x}" y="${y}" width="1" height="1" fill="${pal[ch]}"/>`; }));
+  return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges">${r}</svg>`)}")`;
+}
+const GRASS = pixelTile(['gGgggGgg','ggGgGggG','dgdGgdgd','dDdddDdd','ddDdddDd','dDddDddd','ddddDdDd','DddDdddD'], {g:'#6fb43f',G:'#5a9a30',d:'#8b5a2b',D:'#6e4420'});
+const STONE = pixelTile(['sSssssSs','ssssSsss','sSsssssS','sssSssss','Sssssssa','ssssSsss','sssssSss','sSssssss'], {s:'#adadad',S:'#9a9a9a',a:'#b9b9b9'});
+
+/* ---------- skins: objects for each theme ---------- */
+const SKINS = {
+  classic: {
+    name:'Класика', note:'Сіре вікно, як у Windows 95: чорні міни, червоні прапорці й класичні кольори цифр.',
+    mineName:'міну', tile:'#c0c0c0', wave:'square', base:660,
+    mine: () => S('<g stroke="#111" stroke-width="2.4" stroke-linecap="round"><path d="M16 4.5v23M4.5 16h23M7.8 7.8l16.4 16.4M24.2 7.8 7.8 24.2"/></g><circle cx="16" cy="16" r="8" fill="#111"/><rect x="12" y="12" width="3.2" height="3.2" fill="#fff"/>'),
+    flag: () => S('<path d="M17 5v17" stroke="#111" stroke-width="2"/><path d="M17 5 7.5 10.5 17 16z" fill="#e01b1b"/><path d="M13 22h8v2.5h-8zM9.5 24.5h15V27h-15z" fill="#111"/>')
+  },
+  autumn: {
+    name:'Осінь', note:'Під листям ховаються мухомори, а позначка — кленовий листок.',
+    mineName:'мухомор', tile:'#d9883a', wave:'triangle', base:520,
+    mine: () => S('<path d="M12 18h8l1.2 9a2 2 0 0 1-2 2.2h-6.4a2 2 0 0 1-2-2.2z" fill="#f4ead6" stroke="#8a6a4a"/><path d="M3.5 19.5C3.5 11.6 9 5.5 16 5.5s12.5 6.1 12.5 14z" fill="#d62f22"/><path d="M4.5 19.5h23" stroke="#8a1a12" stroke-width="1.6"/><circle cx="10" cy="13" r="1.9" fill="#fff"/><circle cx="17" cy="9.8" r="2.3" fill="#fff"/><circle cx="22.5" cy="15" r="1.8" fill="#fff"/><circle cx="14.5" cy="16.2" r="1.4" fill="#fff"/>'),
+    flag: () => S('<path d="M16 24v6.5" stroke="#7a3a12" stroke-width="1.8" stroke-linecap="round"/><path d="M16 3l2.5 5 3-1.5-1 5.5 4.5-2-1 3.5 3.5 1-5 4 1 2.5-5.5-1 .5 5h-5l.5-5-5.5 1 1-2.5-5-4 3.5-1-1-3.5 4.5 2-1-5.5 3 1.5z" fill="#e0701e" stroke="#9c3f10" stroke-width=".9" stroke-linejoin="round"/>')
+  },
+  halloween: {
+    name:'Геловін', note:'Міни — гарбузи-ліхтарі та кажани, а позначка — надгробок.',
+    mineName:'гарбуз або кажана', tile:'#3d2a58', wave:'sawtooth', base:330,
+    mine: v => v % 3 === 1
+      ? S('<path d="M16 12c2 0 3 1 3.5 2.5C22 12 26 11 30 13c-2 1-3 3-3 5-2-1-4-1-5 1-1-1-2-1-3 0-.7 2-2 3-3 3s-2.3-1-3-3c-1-1-2-1-3 0-1-2-3-2-5-1 0-2-1-4-3-5 4-2 8-1 10.5 1.5C13 13 14 12 16 12z" fill="#16091f" stroke="#b18be0" stroke-width=".8"/><path d="M13.6 13.2l.4-3.4 1.6 2.6M18.4 13.2l-.4-3.4-1.6 2.6" fill="#16091f" stroke="#b18be0" stroke-width=".8" stroke-linejoin="round"/><circle cx="14.6" cy="15.6" r="1.1" fill="#ffb02e"/><circle cx="17.4" cy="15.6" r="1.1" fill="#ffb02e"/>')
+      : S('<rect x="14.6" y="4" width="3" height="5.5" rx="1" fill="#3f7d2a"/><ellipse cx="10.5" cy="18.5" rx="7" ry="9" fill="#d9661a"/><ellipse cx="21.5" cy="18.5" rx="7" ry="9" fill="#d9661a"/><ellipse cx="16" cy="18.5" rx="6.2" ry="9.6" fill="#f58a2a"/><path d="M9.5 15.5l3.2-3.2 2 4.2zM22.5 15.5l-3.2-3.2-2 4.2z" fill="#2a1200"/><path d="M8.5 20.5h15l-2.2 3.4-2.2-1.6-3.1 2.2-3.1-2.2-2.2 1.6z" fill="#2a1200"/>'),
+    flag: () => S('<path d="M9 27.5V13a7 7 0 0 1 14 0v14.5z" fill="#a3a9b6" stroke="#4d5260" stroke-width="1.2"/><path d="M16 13.5v8.5M12.8 16.6h6.4" stroke="#4d5260" stroke-width="2.2" stroke-linecap="round"/><path d="M5.5 28h21" stroke="#4f9a35" stroke-width="2.6" stroke-linecap="round"/>')
+  },
+  xmas: {
+    name:'Різдво', note:'У снігу заховано ялинкові кулі, а позначка — льодяник-тростинка.',
+    mineName:'ялинкову кулю', tile:'#b6d0e8', wave:'sine', base:880,
+    mine: () => S('<path d="M16 7.6c-2.4-3.4 2.4-3.4 0 0" stroke="#c9961f" fill="none" stroke-width="1.3"/><circle cx="16" cy="19" r="9.2" fill="#d3263a"/><rect x="12.8" y="7.6" width="6.4" height="3.6" rx="1" fill="#e8b93a"/><path d="M7.4 17.6c5.6 2.4 11.6 2.4 17.2 0M7.6 21.6c5.4 2.2 11.4 2.2 16.8 0" stroke="#f5d36a" stroke-width="1.5" fill="none"/><circle cx="12.4" cy="14.8" r="2" fill="#fff" opacity=".8"/>'),
+    flag: () => S('<path d="M19.5 29V12a4.6 4.6 0 0 0-9.2 0" stroke="#9eb4cb" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M19.5 29V12a4.6 4.6 0 0 0-9.2 0" stroke="#fff" stroke-width="4.4" fill="none" stroke-linecap="round"/><path d="M19.5 29V12a4.6 4.6 0 0 0-9.2 0" stroke="#d3263a" stroke-width="4.4" fill="none" stroke-dasharray="2.4 2.4"/>')
+  },
+  pc: {
+    name:'Нутрощі ПК', note:'Замість цифр — графік навантаження: 1 стовпчик до жовтого, 2 — до помаранчевого, 3 — до червоного, 4 — темно-червоні (білі точки — ще +1). Міни — здуті конденсатори, позначка — «Висока напруга».',
+    mineName:'здутий конденсатор', tile:'#1d6b45', wave:'square', base:990,
+    mine: () => S('<path d="M13 27.5v3.5M19 27.5v3.5" stroke="#c9ced6" stroke-width="1.6"/><rect x="9" y="9" width="14" height="19" rx="2.6" fill="#2b5cb8"/><rect x="18.6" y="9" width="3" height="19" fill="#8fb1ef" opacity=".75"/><ellipse cx="16" cy="9" rx="7" ry="3.6" fill="#c9ced6"/><path d="M12 9h8M16 6v6" stroke="#7d848f" stroke-width="1.1"/><path d="M25.5 1.5l-3.2 5.2h3.2l-2.2 4.3" stroke="#ffd447" stroke-width="1.9" fill="none" stroke-linejoin="round" stroke-linecap="round"/>'),
+    flag: () => S('<path d="M16 4 29 27H3z" fill="#ffd447" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/><path d="M17.4 10.5l-4 7h4l-2 6" stroke="#1a1a1a" stroke-width="2" fill="none" stroke-linejoin="round" stroke-linecap="round"/>')
+  },
+  blocks: {
+    name:'Блоковий світ', note:'Піксельна пісочниця: блоки трави приховують бомби, позначка — смолоскип.',
+    mineName:'бомбу', tile:'#6fb43f', wave:'square', base:440,
+    mine: () => S('<rect x="22" y="2" width="2" height="2" fill="#ffd23f"/><rect x="20" y="4" width="2" height="2" fill="#ff8a1f"/><rect x="18" y="6" width="2" height="2" fill="#c9a36a"/><rect x="16" y="8" width="2" height="2" fill="#c9a36a"/><g fill="#222"><rect x="12" y="10" width="8" height="2"/><rect x="10" y="12" width="12" height="2"/><rect x="8" y="14" width="16" height="8"/><rect x="10" y="22" width="12" height="2"/><rect x="12" y="24" width="8" height="2"/></g><rect x="11" y="14" width="3" height="3" fill="#eee"/><rect x="11" y="17" width="2" height="2" fill="#777"/>', true),
+    flag: () => S('<rect x="14" y="14" width="4" height="15" fill="#8a5a2b"/><rect x="14" y="14" width="2" height="15" fill="#a8743c"/><rect x="12" y="6" width="8" height="8" fill="#ff9a1f"/><rect x="14" y="3" width="4" height="4" fill="#ffd23f"/><rect x="14" y="8" width="4" height="4" fill="#fff2a8"/>', true)
+  },
+  esports: {
+    name:'Кіберспорт', note:'Тактичний режим: розміновуйте сектор, де заховано вибухівку з таймером. Позначка — маркер на карті.',
+    mineName:'вибухівку', tile:'#2b333d', wave:'sawtooth', base:600,
+    mine: () => S('<path d="M5 14c-3.4 0-3.4 6 0 6.4M27 14c3.4 0 3.4 6 0 6.4" stroke="#d9493a" stroke-width="1.5" fill="none"/><rect x="5" y="9" width="22" height="16" rx="2" fill="#46553a"/><rect x="7" y="11" width="5.5" height="12" fill="#6b7d4f"/><rect x="19.5" y="11" width="5.5" height="12" fill="#6b7d4f"/><rect x="13.2" y="11.5" width="5.6" height="5.4" rx=".8" fill="#0c140c"/><path d="M14.4 14.2h3.2" stroke="#ff3b3b" stroke-width="1.6"/><circle cx="16" cy="21" r="1.8" fill="#ff3b3b"/>'),
+    flag: () => S('<path d="M16 3a8 8 0 0 0-8 8c0 6 8 17.5 8 17.5S24 17 24 11a8 8 0 0 0-8-8z" fill="#f5a524" stroke="#5a3a00" stroke-width="1"/><circle cx="16" cy="11" r="3.2" fill="#1a1100"/>')
+  }
+};
+const ORDER = Object.keys(SKINS);
+const DIFFS = {
+  easy:{name:'Новачок', r:9,  c:9,  m:10},
+  mid: {name:'Аматор',  r:16, c:16, m:40},
+  pro: {name:'Профі',   r:16, c:30, m:99}
+};
+const FACES = {
+  smile:'<circle cx="16" cy="16" r="12.5" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="2.2"/><circle cx="11.5" cy="13" r="1.9" fill="currentColor"/><circle cx="20.5" cy="13" r="1.9" fill="currentColor"/><path d="M10.5 19c3 3.4 8 3.4 11 0" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/>',
+  oh:'<circle cx="16" cy="16" r="12.5" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="2.2"/><circle cx="11.5" cy="12.5" r="2.2" fill="currentColor"/><circle cx="20.5" cy="12.5" r="2.2" fill="currentColor"/><circle cx="16" cy="21" r="2.8" fill="none" stroke="currentColor" stroke-width="2.2"/>',
+  cool:'<circle cx="16" cy="16" r="12.5" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="2.2"/><path d="M6.5 11.5h19M8 11.5h6.5v3a2.6 2.6 0 0 1-2.6 2.6H10.6A2.6 2.6 0 0 1 8 14.5zM17.5 11.5H24v3a2.6 2.6 0 0 1-2.6 2.6h-1.3a2.6 2.6 0 0 1-2.6-2.6z" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M11 20.5c3 2.8 7 2.8 10 0" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/>',
+  dead:'<circle cx="16" cy="16" r="12.5" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="2.2"/><path d="M9.5 10.5l4 4M13.5 10.5l-4 4M18.5 10.5l4 4M22.5 10.5l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 22.5c3-2.6 7-2.6 10 0" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/>'
+};
+const PIPS = {1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8],7:[0,2,3,4,5,6,8],8:[0,1,2,3,5,6,7,8]};
+
+/* ---------- settings ---------- */
+let skinKey = LS.get('skin', 'classic'); if (!SKINS[skinKey]) skinKey = 'classic';
+let diffKey = LS.get('diff', 'easy');    if (!DIFFS[diffKey]) diffKey = 'easy';
+let numStyle = LS.get('nums', 'digits');
+let soundOn = LS.get('sound', true);
+let mode = 'open';
+
+/* ---------- sound (Web Audio, no files) ---------- */
+let ac = null;
+function ctx(){ if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){ ac = null; } } if (ac && ac.state === 'suspended') ac.resume(); return ac; }
+function tone(f, dur, {type, vol=.05, at=0, to}={}){
+  const a = ctx(); if (!a) return;
+  const t = a.currentTime + at, o = a.createOscillator(), g = a.createGain();
+  o.type = type || SKINS[skinKey].wave; o.frequency.setValueAtTime(f, t);
+  if (to) o.frequency.exponentialRampToValueAtTime(to, t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + .02);
+}
+function noise(dur, vol){
+  const a = ctx(); if (!a) return;
+  const b = a.createBuffer(1, a.sampleRate * dur, a.sampleRate), d = b.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length) ** 2;
+  const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+  f.type = 'lowpass'; f.frequency.value = 900; g.gain.value = vol;
+  s.buffer = b; s.connect(f).connect(g).connect(a.destination); s.start();
+}
+function sfx(kind){
+  if (!soundOn) return;
+  const b = SKINS[skinKey].base;
+  if (kind === 'open') tone(b, .05, {vol:.035});
+  else if (kind === 'flood') { tone(b, .06, {vol:.035}); tone(b * 1.25, .06, {vol:.03, at:.05}); tone(b * 1.5, .08, {vol:.03, at:.1}); }
+  else if (kind === 'flag') tone(b * 1.5, .08, {vol:.04, to:b * 2});
+  else if (kind === 'unflag') tone(b * 1.2, .07, {vol:.035, to:b * .8});
+  else if (kind === 'boom') { noise(.55, .5); tone(140, .5, {type:'sine', vol:.25, to:40}); }
+  else if (kind === 'win') [1, 1.26, 1.5, 2].forEach((m, i) => tone(b * m, .18, {vol:.045, at:i * .11}));
+}
+
+/* ---------- apply skin ---------- */
+function setFavicon(){
+  const sk = SKINS[skinKey];
+  const inner = sk.mine(0).replace(/<svg[^>]*>|<\/svg>/g, '');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="${sk.tile}"/><g transform="translate(2.5 2.5) scale(.84)"${skinKey === 'blocks' ? ' shape-rendering="crispEdges"' : ''}>${inner}</g></svg>`;
+  $('#fav').href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+function applySkin(first){
+  root.dataset.skin = skinKey;
+  if (skinKey === 'blocks') { root.style.setProperty('--cov-img', GRASS); root.style.setProperty('--rev-img', STONE); }
+  else { root.style.removeProperty('--cov-img'); root.style.removeProperty('--rev-img'); }
+  const sk = SKINS[skinKey];
+  $('#brandIcon').innerHTML = sk.mine(0);
+  document.querySelectorAll('.skin').forEach(b => b.setAttribute('aria-checked', b.dataset.k === skinKey));
+  setFavicon();
+  syncTools();
+  if (game.cells) { for (let i = 0; i < game.n; i++) paint(i); }
+  requestAnimationFrame(fit);
+}
+
+/* ---------- game ---------- */
+const board = $('#board'), wrap = $('#wrap');
+const game = {};
+function dims(){
+  const d = DIFFS[diffKey];
+  const narrow = d.c > d.r && availW() < d.c * 21;
+  return narrow ? {r:d.c, c:d.r, m:d.m} : {r:d.r, c:d.c, m:d.m};
+}
+function newGame(){
+  stopTimer();
+  const {r, c, m} = dims();
+  Object.assign(game, {r, c, m, n:r * c, mine:new Uint8Array(r * c), adj:new Uint8Array(r * c), open:new Uint8Array(r * c), flag:new Uint8Array(r * c),
+    started:false, over:false, won:false, opened:0, flags:0, time:0, hit:-1, cur:Math.floor(r / 2) * c + Math.floor(c / 2)});
+  board.style.gridTemplateColumns = `repeat(${c}, var(--cell))`;
+  board.setAttribute('aria-rowcount', r); board.setAttribute('aria-colcount', c);
+  let html = '';
+  for (let i = 0; i < game.n; i++) html += `<div class="cell c" role="gridcell" data-i="${i}"></div>`;
+  board.innerHTML = html;
+  game.cells = board.children;
+  for (let i = 0; i < game.n; i++) paint(i);
+  setFace('smile'); counters();
+  syncSize();
+  hideBanner();
+  fit();
+}
+function nb(i){
+  const {r, c} = game, y = Math.floor(i / c), x = i % c, out = [];
+  for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+    if (!dy && !dx) continue;
+    const yy = y + dy, xx = x + dx;
+    if (yy >= 0 && yy < r && xx >= 0 && xx < c) out.push(yy * c + xx);
+  }
+  return out;
+}
+function plant(safe){
+  const ban = new Set([safe, ...nb(safe)]);
+  let pool = [];
+  for (let i = 0; i < game.n; i++) if (!ban.has(i)) pool.push(i);
+  if (pool.length < game.m) { pool = []; for (let i = 0; i < game.n; i++) if (i !== safe) pool.push(i); }
+  for (let k = 0; k < game.m; k++) {
+    const j = k + Math.floor(Math.random() * (pool.length - k));
+    [pool[k], pool[j]] = [pool[j], pool[k]];
+    game.mine[pool[k]] = 1;
+  }
+  for (let i = 0; i < game.n; i++) game.adj[i] = nb(i).reduce((s, j) => s + game.mine[j], 0);
+}
+function paint(i){
+  const el = game.cells[i], sk = SKINS[skinKey];
+  let cls = 'cell', html = '';
+  if (game.open[i]) {
+    cls += ' o';
+    if (game.mine[i]) { cls += ' mine'; html = sk.mine(i); }
+    else if (game.adj[i]) {
+      const n = game.adj[i];
+      html = skinKey === 'pc'
+        ? `<span class="gauge g${Math.min(n, 4)}">${[1, 2, 3, 4].map(k => `<i${k <= n ? ' class="on"' : ''}></i>`).join('')}${n > 4 ? Array.from({length:n - 4}, (_, k) => `<em style="left:${k * 18}%"></em>`).join('') : ''}</span>`
+        : numStyle === 'pips'
+        ? `<span class="pips n${n}">${Array.from({length:9}, (_, k) => `<i${PIPS[n].includes(k) ? ' class="on"' : ''}></i>`).join('')}</span>`
+        : `<span class="num n${n}">${n}</span>`;
+    }
+    if (i === game.hit) cls += ' hit';
+  } else {
+    cls += ' c';
+    if (game.flag[i]) { html = sk.flag(); if (game.over && !game.won && !game.mine[i]) cls += ' wrong'; }
+  }
+  if (i === game.cur) cls += ' cur';
+  el.className = cls; el.innerHTML = html;
+  const label = game.open[i] ? (game.mine[i] ? sk.mineName : (game.adj[i] ? String(game.adj[i]) : 'порожньо')) : (game.flag[i] ? 'прапорець' : 'закрито');
+  el.setAttribute('aria-label', label);
+}
+function counters(){
+  const left = game.m - game.flags;
+  $('#minesLeft').textContent = (left < 0 ? '-' + String(-left).padStart(2, '0') : String(left).padStart(3, '0'));
+  $('#timer').textContent = String(Math.min(999, game.time)).padStart(3, '0');
+}
+let tick = null, t0 = 0;
+function startTimer(){ t0 = performance.now(); tick = setInterval(() => { game.time = Math.floor((performance.now() - t0) / 1000); counters(); }, 250); }
+function stopTimer(){ if (tick) clearInterval(tick); tick = null; }
+function setFace(f){ $('#face').innerHTML = S(FACES[f]); }
+function showBanner(title, text){
+  const b = $('#banner'); $('#bTitle').textContent = title; $('#bText').textContent = text;
+  b.hidden = false; b.classList.remove('pop'); void b.offsetWidth; if (!reduce) b.classList.add('pop');
+}
+function hideBanner(){ $('#banner').hidden = true; }
+
+function reveal(i){
+  if (game.over || game.flag[i]) return;
+  if (game.open[i]) { chord(i); return; }
+  if (!game.started) { game.started = true; plant(i); startTimer(); }
+  if (game.mine[i]) { lose(i); return; }
+  const stack = [i]; let count = 0;
+  while (stack.length) {
+    const k = stack.pop();
+    if (game.open[k] || game.flag[k]) continue;
+    game.open[k] = 1; game.opened++; count++; paint(k);
+    if (game.adj[k] === 0) nb(k).forEach(j => { if (!game.open[j] && !game.mine[j]) stack.push(j); });
+  }
+  sfx(count > 1 ? 'flood' : 'open');
+  checkWin();
+}
+function chord(i){
+  if (!game.adj[i]) return;
+  const ns = nb(i), f = ns.filter(j => game.flag[j]).length;
+  if (f !== game.adj[i]) return;
+  ns.forEach(j => { if (!game.over && !game.open[j] && !game.flag[j]) reveal(j); });
+}
+function toggleFlag(i){
+  if (game.over || game.open[i]) return;
+  game.flag[i] ^= 1; game.flags += game.flag[i] ? 1 : -1;
+  sfx(game.flag[i] ? 'flag' : 'unflag');
+  paint(i); counters();
+}
+function lose(i){
+  game.over = true; game.hit = i; stopTimer();
+  for (let k = 0; k < game.n; k++) {
+    if (game.mine[k] && !game.flag[k]) game.open[k] = 1;
+    paint(k);
+  }
+  setFace('dead'); sfx('boom');
+  showBanner('Бах!', `${game.time} с`);
+  if (!reduce) { board.classList.remove('shake'); void board.offsetWidth; board.classList.add('shake'); }
+}
+function checkWin(){
+  if (game.opened !== game.n - game.m) return;
+  game.over = game.won = true; stopTimer();
+  game.time = Math.max(1, Math.round((performance.now() - t0) / 1000));
+  for (let k = 0; k < game.n; k++) if (game.mine[k] && !game.flag[k]) { game.flag[k] = 1; game.flags++; paint(k); }
+  counters(); setFace('cool'); sfx('win');
+  const best = LS.get('best.' + diffKey, null);
+  const record = best === null || game.time < best;
+  if (record) LS.set('best.' + diffKey, game.time);
+  showBanner('Перемога!', `${game.time} с${record ? ' · рекорд' : ''}`);
+  showRecords();
+}
+function showRecords(){
+  $('#records').innerHTML = Object.entries(DIFFS).map(([k, d]) => {
+    const b = LS.get('best.' + k, null);
+    return `<span>${d.name} (${d.r}×${d.c}) <b>${b === null ? '—' : b + ' с'}</b></span>`;
+  }).join('');
+}
+function availW(){
+  const f = getComputedStyle($('.frame'));
+  return $('.stage').clientWidth - parseFloat(f.paddingLeft) - parseFloat(f.paddingRight);
+}
+function fit(){
+  if (!game.c) return;
+  const gap = parseFloat(getComputedStyle(board).columnGap) || 0;
+  const byW = Math.floor((availW() - (game.c - 1) * gap) / game.c);
+  const top = $('.board-wrap').getBoundingClientRect().top + window.scrollY;
+  const byH = Math.floor((window.innerHeight - top - 30 - (game.r - 1) * gap) / game.r);
+  let s = Math.min(byW, Math.max(byH, 26));
+  s = Math.max(18, Math.min(46, s));
+  board.style.setProperty('--cell', s + 'px');
+}
+
+/* ---------- input ---------- */
+let press = null, lastType = 'mouse';
+board.addEventListener('pointerdown', e => {
+  const el = e.target.closest('.cell'); if (!el) return;
+  lastType = e.pointerType; board.classList.remove('kbd');
+  ctx();
+  const i = +el.dataset.i;
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  press = {i, x:e.clientX, y:e.clientY, long:false, timer:null};
+  if (!game.over && !game.open[i]) setFace('oh');
+  if (e.pointerType !== 'mouse') press.timer = setTimeout(() => { if (press) { press.long = true; toggleFlag(i); if (navigator.vibrate) try { navigator.vibrate(18); } catch(_){} } }, 430);
+});
+board.addEventListener('pointermove', e => { if (press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 12) { clearTimeout(press.timer); press = null; if (!game.over) setFace('smile'); } });
+['pointercancel', 'pointerleave'].forEach(t => board.addEventListener(t, () => { if (press) { clearTimeout(press.timer); press = null; } if (!game.over) setFace('smile'); }));
+board.addEventListener('pointerup', e => {
+  if (!press) return;
+  clearTimeout(press.timer);
+  const el = e.target.closest('.cell'), p = press; press = null;
+  if (!game.over) setFace('smile');
+  if (!el || +el.dataset.i !== p.i || p.long) return;
+  game.cur = p.i;
+  if (mode === 'flag' && !game.open[p.i]) toggleFlag(p.i); else reveal(p.i);
+});
+board.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  if (lastType !== 'mouse') return;
+  const el = e.target.closest('.cell'); if (el) toggleFlag(+el.dataset.i);
+});
+board.addEventListener('keydown', e => {
+  const k = e.key, {c, n} = game; let cur = game.cur;
+  const moves = {ArrowLeft:-1, ArrowRight:1, ArrowUp:-c, ArrowDown:c};
+  if (k in moves) {
+    e.preventDefault(); board.classList.add('kbd');
+    const nx = cur + moves[k];
+    if ((k === 'ArrowLeft' && cur % c === 0) || (k === 'ArrowRight' && cur % c === c - 1) || nx < 0 || nx >= n) return;
+    game.cur = nx; paint(cur); paint(nx);
+    game.cells[nx].scrollIntoView({block:'nearest', inline:'nearest'});
+  } else if (k === 'Enter' || k === ' ') { e.preventDefault(); board.classList.add('kbd'); ctx(); reveal(cur); }
+  else if (k === 'f' || k === 'F' || k === 'а' || k === 'А') { board.classList.add('kbd'); toggleFlag(cur); }
+});
+document.addEventListener('keydown', e => {
+  if ((e.key === 'r' || e.key === 'R' || e.key === 'к' || e.key === 'К') && !e.ctrlKey && !e.metaKey && !e.altKey && !$('#info').open) newGame();
+});
+$('#face').addEventListener('click', () => { ctx(); newGame(); });
+
+/* toolbar */
+$('#skins').innerHTML = ORDER.map(k => `<button type="button" class="skin" role="radio" data-k="${k}" aria-checked="false" aria-label="${SKINS[k].name}" title="${SKINS[k].name}" style="--tile:${SKINS[k].tile}">${SKINS[k].mine(0)}</button>`).join('');
+$('#skins').addEventListener('click', e => {
+  const b = e.target.closest('.skin'); if (!b) return;
+  skinKey = b.dataset.k; LS.set('skin', skinKey); applySkin(false); sfx('flag');
+});
+function syncSeg(sel, attr, val){ document.querySelectorAll(sel + ' button').forEach(b => b.setAttribute('aria-pressed', b.dataset[attr] === val)); }
+const DKEYS = Object.keys(DIFFS);
+function syncSize(){
+  const d = game.r ? {r:game.r, c:game.c} : DIFFS[diffKey];
+  const b = $('#sizeBtn');
+  b.innerHTML = `<svg viewBox="0 0 18 18" aria-hidden="true" fill="currentColor"><rect x="1" y="1" width="7" height="7" rx="1.5"/><rect x="10" y="1" width="7" height="7" rx="1.5"/><rect x="1" y="10" width="7" height="7" rx="1.5"/><rect x="10" y="10" width="7" height="7" rx="1.5" opacity=".45"/></svg>${d.c}×${d.r}`;
+  b.setAttribute('aria-label', `Розмір поля ${d.c}×${d.r}, ${DIFFS[diffKey].m} мін. Натисніть, щоб змінити`);
+  b.title = `${DIFFS[diffKey].name} · ${DIFFS[diffKey].m} мін — натисніть, щоб змінити`;
+}
+$('#sizeBtn').addEventListener('click', () => { diffKey = DKEYS[(DKEYS.indexOf(diffKey) + 1) % DKEYS.length]; LS.set('diff', diffKey); newGame(); });
+function syncTools(){
+  const n = $('#numsBtn'), m = $('#modeBtn');
+  n.hidden = skinKey === 'pc';
+  n.innerHTML = numStyle === 'pips' ? '<span class="pip3"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>' : '<span class="dig">1</span>';
+  n.setAttribute('aria-label', numStyle === 'pips' ? 'Підказки: точки' : 'Підказки: цифри');
+  m.innerHTML = SKINS[skinKey].flag(); m.setAttribute('aria-pressed', mode === 'flag');
+  m.setAttribute('aria-label', mode === 'flag' ? 'Режим прапорців увімкнено' : 'Режим прапорців вимкнено');
+}
+$('#numsBtn').addEventListener('click', () => { numStyle = numStyle === 'pips' ? 'digits' : 'pips'; LS.set('nums', numStyle); syncTools(); for (let i = 0; i < game.n; i++) paint(i); });
+$('#modeBtn').addEventListener('click', () => { mode = mode === 'flag' ? 'open' : 'flag'; syncTools(); });
+$('#bAgain').addEventListener('click', () => { newGame(); board.focus({preventScroll:true}); });
+
+/* sound + info */
+const SPK_ON = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>';
+const SPK_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>';
+function syncSound(){ const b = $('#soundBtn'); b.innerHTML = soundOn ? SPK_ON : SPK_OFF; b.setAttribute('aria-pressed', soundOn); b.setAttribute('aria-label', soundOn ? 'Звук увімкнено' : 'Звук вимкнено'); }
+$('#soundBtn').addEventListener('click', () => { soundOn = !soundOn; LS.set('sound', soundOn); syncSound(); if (soundOn) sfx('flag'); });
+$('#infoBtn').addEventListener('click', () => { showRecords(); $('#info').showModal(); });
+$('#closeInfo').addEventListener('click', () => $('#info').close());
+$('#info').addEventListener('click', e => { if (e.target === $('#info')) $('#info').close(); });
+
+window.addEventListener('resize', () => {
+  const was = game.r > game.c;
+  if (diffKey === 'pro' && !game.started && was !== (dims().r > dims().c)) newGame(); else fit();
+});
+
+/* boot */
+syncSound();
+newGame(); applySkin(true); showRecords();
+})();
+</script>
+</body>
+</html>
